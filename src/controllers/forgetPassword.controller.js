@@ -57,9 +57,9 @@ export const forgotPassword = async (req, res) => {
         purpose: "FORGOT_PASSWORD",
         expiresAt
       });
-    //   console.log("OTP created successfully:", result);
+      //   console.log("OTP created successfully:", result);
     } catch (err) {
-    //   console.error("Error creating OTP:", err);
+      //   console.error("Error creating OTP:", err);
       throw err;
     }
 
@@ -78,10 +78,10 @@ export const forgotPassword = async (req, res) => {
 
 
 export const verifyOtp = async (req, res) => {
-    // console.log()
+  // console.log(verifyOtp)
   try {
     const { email, otp } = req.body;
-    // console.log(email,otp)
+    console.log(email, otp)
 
     if (!email || !otp) {
       return res.status(400).json({ message: "Email and OTP are required" });
@@ -95,12 +95,12 @@ export const verifyOtp = async (req, res) => {
     }
 
     // Hash the incoming OTP (because OTP is stored hashed in DB)
-    const otpHash = crypto
+    const otpHash = await crypto
       .createHash("sha256")
       .update(otp)
       .digest("hex");
 
-    // console.log("hashedOtp",otpHash);
+    console.log("hashedOtp", otpHash);
 
 
     // Find the valid OTP record
@@ -112,22 +112,38 @@ export const verifyOtp = async (req, res) => {
     }
 
     //  Mark OTP as used
-    await markOtpAsUsed(otpRecord.id);
-    
+    const updateOtpState = await markOtpAsUsed(otpRecord.id);
+    console.log("OTP marked as used:", updateOtpState);
+
 
     //  Generate temporary reset token (to allow password reset)
-    const resetToken = crypto.randomBytes(32).toString("hex");
-    const resetTokenHash = crypto
+    const resetToken = await crypto.randomBytes(32).toString("hex");
+    const resetTokenHash = await crypto
       .createHash("sha256")
       .update(resetToken)
       .digest("hex");
 
     //  Save reset token and expiry in users table
-    const expiryMinutes = Number(process.env.RESET_TOKEN_EXPIRY);
 
-      const resetTokenExpires = new Date(
-        Date.now() + expiryMinutes * 60 * 1000
-      );
+    if (resetToken === null || resetToken === undefined || !resetTokenHash) {
+
+      console.log("Reset token generation failed");
+    }
+
+    const TokenEnv = await process.env.RESET_TOKEN_EXPIRY;
+
+    if (!TokenEnv) {
+      throw new Error("RESET_TOKEN_EXPIRY is not defined in environment variables");
+    }
+
+    const expiryMinutes = await Number(TokenEnv);
+    if (isNaN(expiryMinutes)) {
+      throw new Error("RESET_TOKEN_EXPIRY is not a valid number");
+    }
+
+    const resetTokenExpires = new Date(
+      Date.now() + expiryMinutes * 60 * 1000
+    );
 
     const query = `
       UPDATE users
@@ -135,8 +151,15 @@ export const verifyOtp = async (req, res) => {
          reset_token_expires = $2 
     
       WHERE id = $3
+      RETURNING *
     `;
-    await db.oneOrNone(query, [resetTokenHash, resetTokenExpires.toISOString(), user.id]);
+    console.log("resetTokenHash:", resetTokenHash);
+   const userTOken = await db.one(query, [resetTokenHash, resetTokenExpires.toISOString(), user.id]);
+
+   if(!userTOken){
+    console.log("Failed to update user with reset token");
+   }
+ 
 
     //  Return reset token to client
     return res.json({
@@ -211,15 +234,15 @@ export const resendOtp = async (req, res) => {
 
 
 export const resetPassword = async (req, res) => {
- 
+
   try {
     const { newPassword } = req.body;
     const resetToken = req.params.reset_token;
 
-    // console.log("resetToken:",resetToken)
+    console.log("resetToken:",resetToken)
     // console.log("password",newPassword)
 
-    if ( !newPassword) {
+    if (!newPassword) {
       return res.status(400).json({
         message: " Newpassword are required"
       });
@@ -276,3 +299,5 @@ export const resetPassword = async (req, res) => {
     });
   }
 };
+
+

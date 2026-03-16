@@ -41,6 +41,8 @@ export const fetchUsers = async () => {
     }
 }
 
+
+
 export async function updateUserEmail(userId, newEmail) {
   const query = `
     UPDATE users
@@ -130,3 +132,4 @@ export async function deleteUser(userId) {
     console.error('Error deleting user:', error.message);
   } 
 }
+

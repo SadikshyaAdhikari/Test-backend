@@ -4,9 +4,9 @@ export const createUserTable = async () => {
   const query = `
     CREATE TABLE IF NOT EXISTS users (
       id SERIAL PRIMARY KEY,
-      username VARCHAR(50) NOT NULL UNIQUE,
+      username VARCHAR(50) NOT NULL ,
       email VARCHAR(150) NOT NULL UNIQUE,
-      password TEXT NOT NULL,
+      password TEXT,
       role VARCHAR(20) DEFAULT 'user',
       token VARCHAR(500) NULL,
       created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
@@ -52,9 +52,18 @@ export const findUserById = async (id) => {
   return db.oneOrNone('SELECT * FROM users WHERE id = $1', [id]);
 };
 
-//view my details
+// view my details
+// export const getUserDetails = async (id) => {
+//   return db.oneOrNone('SELECT id, username, email, role, created_at FROM users WHERE id = $1', [id]);
+// };
+
 export const getUserDetails = async (id) => {
-  return db.oneOrNone('SELECT id, username, email, role, created_at FROM users WHERE id = $1', [id]);
+  return db.oneOrNone(
+    `SELECT id, username, email, role, google_id, auth_provider, created_at 
+     FROM users 
+     WHERE id = $1`,
+    [id]
+  );
 };
 
 //add refresh token column to users table
@@ -164,3 +173,27 @@ export const addResetTokenColumn = async () => {
     console.error("Error adding reset_token column:", error.message);
   }
 } ;
+
+
+
+//columns for oAuth users
+export const addOAuthColumns = async () => {
+  const query = `
+    ALTER TABLE users 
+    ADD COLUMN google_id VARCHAR(255) UNIQUE  ,
+    ADD COLUMN auth_provider VARCHAR(20) DEFAULT 'local';
+  `;
+  return db.none(query);
+};
+
+
+//remove not null constraint from password column to allow oAuth users without password
+export const removeNotNullConstraintFromPassword = async () => {
+  const query = `
+    ALTER TABLE users
+    ALTER COLUMN password DROP NOT NULL;
+  `;
+  return db.none(query);
+}
+
+
