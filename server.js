@@ -18,6 +18,9 @@ import { addRefreshTokenColumn } from "./src/models/user.model.js";
 import { seedSudoAdmin } from "./src/seeders/seed.js";
 import { createOtpTable } from './src/models/otp.model.js';
 import { generateRefreshToken, generateToken } from "./src/utils/token.js";
+import { createPostsTable } from './src/models/post.model.js';
+import { createLikesTable } from './src/models/like.model.js';
+import { createCommentsTable } from './src/models/comment.model.js';
 
 
 //const PORT = 3000; //dont use this port here use it fronm env file
@@ -41,6 +44,9 @@ const PORT = process.env.PORT || 3000;
 // await addResetTokenColumn();
 // await addOAuthColumns();
 // await removeNotNullConstraintFromPassword();
+await createPostsTable();
+await createLikesTable();
+await createCommentsTable();
 
 // app.use(
 //   session({
