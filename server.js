@@ -1,5 +1,6 @@
 // import session from "express-session";
 // import { Strategy as GoogleStrategy } from "passport-google-oauth20";
+import express from "express";
 import dotenv from 'dotenv';
 import { db } from "./src/config/db.js"; // or your db file path
 
@@ -182,6 +183,7 @@ await createCommentsTable();
 
 app.get("/", (req, res) => res.send("Home page"));
 
+app.use("/uploads", express.static("uploads"));
 
 app.get("/logout", (req, res) => {
   req.logout(() => {
