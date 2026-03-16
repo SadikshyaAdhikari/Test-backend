@@ -31,14 +31,14 @@ export const registerUser = async (req, res) => {
         res.cookie('accessToken', accessToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Strict',
+        sameSite: 'Lax',
         maxAge: Number(process.env.ACCESS_COOKIE_MAX_AGE)
       });
 
       res.cookie('refreshToken', refreshToken, {
         httpOnly: true,
         secure: process.env.NODE_ENV === 'production',
-        sameSite: 'Strict',
+        sameSite: 'Lax',
         maxAge: Number(process.env.REFRESH_COOKIE_MAX_AGE)
       });
 
@@ -72,13 +72,13 @@ export const registerUser = async (req, res) => {
     res.cookie('accessToken', accessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Strict',
+      sameSite: 'Lax',
       maxAge: Number(process.env.ACCESS_COOKIE_MAX_AGE)
     });
     res.cookie('refreshToken', refreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Strict',
+      sameSite: 'Lax',
       maxAge: Number(process.env.REFRESH_COOKIE_MAX_AGE)
     });
     
@@ -134,19 +134,26 @@ export const loginUser = async (req, res) => {
         res.cookie('accessToken', accessToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          sameSite: 'Strict',
+          sameSite: 'Lax',
           maxAge: Number(process.env.ACCESS_COOKIE_MAX_AGE)
         });
         res.cookie('refreshToken', refreshToken, {
           httpOnly: true,
           secure: process.env.NODE_ENV === 'production',
-          sameSite: 'Strict',
+          sameSite: 'Lax',
           maxAge: Number(process.env.REFRESH_COOKIE_MAX_AGE)
+        });
+        res.cookie('id', user.id, {
+          httpOnly: true,
+          secure: process.env.NODE_ENV === 'production',
+          sameSite: 'Lax',
+          maxAge: Number(process.env.ACCESS_COOKIE_MAX_AGE)
         });
 
 
         res.status(200).json({ 
             message: 'Login successful',
+            id: user.id,
             accessToken,
             refreshToken
         });
@@ -256,14 +263,14 @@ export const refreshToken = async (req, res) => {
     res.cookie('accessToken', newAccessToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Strict',
+      sameSite: 'Lax',
       maxAge: Number(process.env.ACCESS_COOKIE_MAX_AGE)
     });
 
     res.cookie('refreshToken', newRefreshToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
-      sameSite: 'Strict',
+      sameSite: 'Lax',
       maxAge: Number(process.env.REFRESH_COOKIE_MAX_AGE)
     });
 
@@ -310,6 +317,22 @@ export const logoutFromAllDevices = async (req, res) => {
   }
 };
 
+
+//current user 
+export const currentUser = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const user = await getUserDetails(userId);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    return res.json({ user });
+  } catch (error) {
+    console.error("Fetch current user error:", error);
+    return res.status(500).json({ message: "Something went wrong" });
+  }
+};
 
 
 

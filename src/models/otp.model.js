@@ -45,23 +45,40 @@ export const createOtp = ({ userId, otpHash, purpose, expiresAt }) => {
   const query = `
     INSERT INTO otps (user_id, otp_hash, purpose, expires_at)
     VALUES ($1, $2, $3, $4)
+    RETURNING *
   `;
-  return db.none(query, [userId, otpHash, purpose, expiresAt]);
+  return db.one(query, [userId, otpHash, purpose, expiresAt]);
 };
 
 // get valid OTP
-export const findValidOtp = (userId, otpHash, purpose) => {
-  console.log("purpose:",purpose)
-  const query = `
-    SELECT *
+// export const findValidOtp = (userId, otpHash, purpose) => {
+//   console.log("purpose:",purpose)
+//   const query = `
+//     SELECT *
+//     FROM otps
+//     WHERE user_id = $1
+//       AND otp_hash = $2
+//       AND purpose = $3
+//       AND is_used = false
+//       AND expires_at::timestamp with time zone > NOW()
+//   `;
+//   return db.oneOrNone(query, [userId, otpHash, purpose]);
+// };
+
+// Check your otp.model.js - it should look like this:
+export const findValidOtp = async (userId, otpHash, purpose) => {
+  return await db.oneOrNone(
+    `
+    SELECT id, user_id, otp_hash, purpose, expires_at, is_used
     FROM otps
     WHERE user_id = $1
       AND otp_hash = $2
       AND purpose = $3
       AND is_used = false
-      AND expires_at::timestamp with time zone > NOW()
-  `;
-  return db.oneOrNone(query, [userId, otpHash, purpose]);
+      AND expires_at > NOW()
+    `,
+    [userId, otpHash, purpose]
+  );
 };
   
 
