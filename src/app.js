@@ -3,6 +3,8 @@ import  router from "./routes/auth.routes.js";
 import cookieParser from "cookie-parser";
 import cors from "cors";
 import googleRouter from "./routes/google.routes.js";
+import postRouter from "./routes/posts.routes.js";
+
 const app = express();
 
 
@@ -21,6 +23,11 @@ app.use(cookieParser())
 // Routes will go here later
 app.use("/api/auth",  router);
 app.use("/api", googleRouter);
+
+//post routes
+app.use("/api/posts", postRouter);
+
+
 
 
 export default app;
