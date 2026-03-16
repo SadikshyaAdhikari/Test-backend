@@ -20,7 +20,7 @@ app.use(cookieParser())
 
 // Routes will go here later
 app.use("/api/auth",  router);
-app.use("/", googleRouter);
+app.use("/api", googleRouter);
 
 
 export default app;
