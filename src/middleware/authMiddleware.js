@@ -69,7 +69,7 @@ import { findUserById } from "../models/user.model.js";
 export const authMiddleware = async (req, res, next) => {
   try {
 
-    console.log("Cookies:", req.cookies);
+    // console.log("Cookies:", req.cookies);
 
     const accessToken = req.cookies.accessToken;
 
