@@ -3,7 +3,7 @@ import { createLike, deleteLike } from "../models/like.model.js"; // adjust path
 // Create a like
 export const likePost = async (req, res) => {
   try {
-    const userId = req.user.id; // assuming you have auth middleware
+    const userId = req.user.id; // from auth middleware
     const { postId } = req.params;
 
     await createLike(userId, postId);
@@ -18,7 +18,7 @@ export const likePost = async (req, res) => {
 // Delete a like
 export const unlikePost = async (req, res) => {
   try {
-    const userId = req.user.id; // assuming you have auth middleware
+    const userId = req.user.id; // from auth middleware
     const { postId } = req.params;
 
     await deleteLike(userId, postId);
