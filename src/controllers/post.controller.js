@@ -1,4 +1,4 @@
-import { createPost } from "../models/post.model.js";
+import { createPost, getAllPosts } from "../models/post.model.js";
 
 export const createPostController = async (req, res) => {
   try {
@@ -22,3 +22,23 @@ export const createPostController = async (req, res) => {
     res.status(500).json({ message: "Error creating post" });
   }
 };
+
+
+//get all posts 
+export const getAllPostsController = async (req, res) => {
+  try {
+    const posts = await getAllPosts();
+
+    res.status(200).json({
+      message: "Posts fetched successfully",
+      posts,
+    });
+
+  } catch (error) {
+    console.error("Fetch posts error:", error);
+    res.status(500).json({
+      message: "Error fetching posts",
+    });
+  }
+};
+

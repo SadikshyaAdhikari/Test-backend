@@ -29,3 +29,22 @@ export const createPost = async (userId, text, mediaUrl) => {
     `;
     return db.one(query, [userId, text, mediaUrl]);
 };
+
+//get all posts
+export const getAllPosts = async () => {
+    const query = `
+    SELECT 
+      posts.id,
+      posts.text,
+      posts.media_url,
+      posts.like_count,
+      posts.comment_count,
+      posts.created_at,
+      users.id AS user_id
+    FROM posts
+    JOIN users ON posts.user_id = users.id
+    ORDER BY posts.created_at DESC
+  `;
+
+    return db.any(query);
+};
