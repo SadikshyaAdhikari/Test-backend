@@ -20,3 +20,53 @@ export const createLikesTable = async () => {
  `;
     return db.none(query);
 }
+
+//Add a named unique constraint to prevent duplicate likes
+export const addUniqueConstraint = async () => {
+    const query = `
+    ALTER TABLE likes
+     ADD CONSTRAINT unique_user_post UNIQUE (user_id, post_id);
+    `;
+    return db.none(query);
+};
+
+export const createLike = async (userId, postId) => {
+  try {
+    // Attempt to insert a like; check if it actually happened
+    const result = await db.result(
+      `INSERT INTO likes (user_id, post_id)
+       VALUES ($1, $2)
+       ON CONFLICT (user_id, post_id) DO NOTHING`,
+      [userId, postId]
+    );
+
+    // Only increment like_count if a new like was inserted
+    if (result.rowCount > 0) {
+      await db.none(
+        `UPDATE posts SET like_count = like_count + 1 WHERE id = $1`,
+        [postId]
+      );
+    }
+  } catch (err) {
+    console.error("Error creating like:", err);
+    throw err;
+  }
+};
+
+//delete a like
+export const deleteLike = async (userId, postId) => {
+  const result = await db.result(
+    `DELETE FROM likes
+     WHERE user_id = $1 AND post_id = $2
+     RETURNING *`,
+    [userId, postId]
+  );
+
+  if (result.rowCount > 0) {
+    await db.none(
+      `UPDATE posts SET like_count = like_count - 1 WHERE id = $1`,
+      [postId]
+    );
+  }
+};
+

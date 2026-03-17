@@ -3,7 +3,7 @@ import { createPost, getAllPosts } from "../models/post.model.js";
 export const createPostController = async (req, res) => {
   try {
     const userId = req.user.id;   // from auth middleware
-    const { text } = req.body;
+    const { text = '' } = req.body;
     let mediaUrl = null;
 
     if (req.file) {
