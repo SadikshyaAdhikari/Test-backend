@@ -3,6 +3,7 @@ import { createPostController, getAllPostsController } from "../controllers/post
 import { upload } from "../middleware/multer.middleware.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { likePost, unlikePost } from "../controllers/likes.controller.js";
+import { addComment, deleteCommentController, getComments } from "../controllers/comments.controller.js";
 
 const router = express.Router();
 
@@ -11,10 +12,27 @@ router.post("/create", authMiddleware,upload.single("media"), createPostControll
 //get all posts
 router.get("/posts", getAllPostsController);
 
+
+//LIKING
+
 //like post
 router.post("/:postId/like", authMiddleware, likePost);
 
 //unlike post
 router.delete("/:postId/like", authMiddleware, unlikePost);
 
+
+//COMMENTING
+
+//add comment
+router.post("/:postId/comments", authMiddleware, addComment);
+
+//get comments for a post
+router.get("/:postId/comments", authMiddleware, getComments);
+
+//delete comment
+router.delete("/comments/:commentId", authMiddleware, deleteCommentController);
+
+
 export default router;
+
