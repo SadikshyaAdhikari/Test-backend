@@ -1,4 +1,4 @@
-import { createPost, deletePost, getAllPosts, getPostsWithCounts } from "../models/post.model.js"
+import { createPost, deletePost, getAllPosts, getMyPosts, getPostsWithCounts } from "../models/post.model.js"
 
 export const createPostController = async (req, res) => {
   try {
@@ -56,12 +56,26 @@ export const fetchPosts = async (req, res) => {
 
 //delete a post
 export const deletePostController = async (req, res) => {
-    try {
-        const postId = req.params.postId;
-        const deletedPost = await deletePost(postId);
-        res.json(deletedPost);
-    } catch (error) {
-        console.error("Error deleting post:", error);
-        res.status(500).json({ message: "Server error" });
-    }
+  try {
+    const postId = req.params.postId;
+    const deletedPost = await deletePost(postId);
+    res.json(deletedPost);
+  } catch (error) {
+    console.error("Error deleting post:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+//get posts of a specific user
+export const getUserPostsController = async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const posts = await getMyPosts(userId);
+    res.json(posts);
+  }
+  catch (error) {
+    console.error("Error fetching user's posts:", error);
+    res.status(500).json({ message: "Server error" });
+
+  }
 };

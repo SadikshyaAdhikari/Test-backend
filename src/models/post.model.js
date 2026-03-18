@@ -88,3 +88,13 @@ export const deletePost = async (postId) => {
     `;
     return db.one(query, [postId]);
 };
+
+//get posts for a specific user
+export const getMyPosts = async (userId) => {
+  const query = `
+    SELECT * FROM posts
+    WHERE user_id = $1
+    ORDER BY created_at DESC;
+  `;
+  return db.any(query, [userId]);
+}
