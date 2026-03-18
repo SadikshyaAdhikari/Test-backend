@@ -1,5 +1,5 @@
 import express from "express";
-import { createPostController, getAllPostsController } from "../controllers/post.controller.js";
+import { createPostController, deletePostController, fetchPosts, getAllPostsController } from "../controllers/post.controller.js";
 import { upload } from "../middleware/multer.middleware.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { likePost, unlikePost } from "../controllers/likes.controller.js";
@@ -7,10 +7,14 @@ import { addComment, deleteCommentController, getComments } from "../controllers
 
 const router = express.Router();
 
+//create a new post
 router.post("/create", authMiddleware,upload.single("media"), createPostController);
 
 //get all posts
-router.get("/posts", getAllPostsController);
+router.get("/posts", authMiddleware, fetchPosts);
+
+//delete post
+router.delete("/:postId", authMiddleware, deletePostController);
 
 
 //LIKING
@@ -20,6 +24,9 @@ router.post("/:postId/like", authMiddleware, likePost);
 
 //unlike post
 router.delete("/:postId/like", authMiddleware, unlikePost);
+
+
+
 
 
 //COMMENTING

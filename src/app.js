@@ -25,7 +25,7 @@ app.use("/api/auth",  router);
 app.use("/api", googleRouter);
 
 //post routes
-app.use("/api/posts", postRouter);
+app.use("/api", postRouter);
 
 
 

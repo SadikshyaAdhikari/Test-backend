@@ -196,4 +196,6 @@ export const removeNotNullConstraintFromPassword = async () => {
   return db.none(query);
 }
 
-
+// export const findUserById = async (id) => {
+//   return db.oneOrNone('SELECT * FROM users WHERE id = $1', [id]);
+// }

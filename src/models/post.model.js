@@ -48,3 +48,43 @@ export const getAllPosts = async () => {
 
     return db.any(query);
 };
+
+
+//get posts with like and comment counts, and whether the current user liked each post
+export const getPostsWithCounts = async (userId) => {
+  const query = `
+    SELECT 
+      posts.*,
+      COALESCE(likes_count.count, 0) AS like_count,
+      COALESCE(comments_count.count, 0) AS comment_count,
+      CASE WHEN user_like.user_id IS NULL THEN false ELSE true END AS liked_by_user
+    FROM posts
+    -- Count total likes
+    LEFT JOIN (
+      SELECT post_id, COUNT(*) AS count
+      FROM likes
+      GROUP BY post_id
+    ) AS likes_count ON posts.id = likes_count.post_id
+    -- Count total comments
+    LEFT JOIN (
+      SELECT post_id, COUNT(*) AS count
+      FROM comments
+      GROUP BY post_id
+    ) AS comments_count ON posts.id = comments_count.post_id
+    -- Check if the current user liked the post
+    LEFT JOIN likes AS user_like
+      ON posts.id = user_like.post_id AND user_like.user_id = $1
+    ORDER BY posts.created_at DESC;
+  `;
+  return db.any(query, [userId]);
+};
+
+//delete a post
+export const deletePost = async (postId) => {
+    const query = `
+    DELETE FROM posts
+    WHERE id = $1
+    RETURNING *;
+    `;
+    return db.one(query, [postId]);
+};
