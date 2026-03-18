@@ -1,5 +1,5 @@
 import express from 'express';
-import { logoutUser, logoutFromAllDevices, refreshToken, registerUser, currentUser } from '../controllers/auth.controllers.js';
+import { logoutUser, logoutFromAllDevices, refreshToken, registerUser, currentUser, findUserByIdController } from '../controllers/auth.controllers.js';
 import { loginUser } from '../controllers/auth.controllers.js';
 import { deleteUser } from '../controllers/auth.controllers.js';
 import { adminOnly } from '../middleware/adminOnly.js';
@@ -51,6 +51,8 @@ router.post('/resend-otp', resendOtp)
 //current-user route
 router.get('/current-user', authMiddleware, currentUser);
 
+//user from id route
+router.get('/user/:id', authMiddleware, findUserByIdController);
 
                                                     
 // module.exports = router;
