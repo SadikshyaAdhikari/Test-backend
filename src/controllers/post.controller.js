@@ -27,6 +27,7 @@ export const createPostController = async (req, res) => {
 //get all posts 
 export const getAllPostsController = async (req, res) => {
   try {
+    
     const posts = await getAllPosts();
 
     res.status(200).json({
@@ -45,8 +46,12 @@ export const getAllPostsController = async (req, res) => {
 //get posts with like and comment counts, and whether the current user liked each post
 export const fetchPosts = async (req, res) => {
   try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const offset = (page -1) * limit;
+
     const userId = req.user.id; // get logged-in user ID from auth
-    const posts = await getPostsWithCounts(userId);
+    const posts = await getPostsWithCounts(userId, limit, offset);
     res.json(posts);
   } catch (error) {
     console.error("Error fetching posts:", error);
@@ -70,7 +75,12 @@ export const deletePostController = async (req, res) => {
 export const getUserPostsController = async (req, res) => {
   try {
     const userId = req.params.userId;
-    const posts = await getMyPosts(userId);
+
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 5;
+    const offset = (page -1) * limit;
+
+    const posts = await getMyPosts(userId, limit, offset);
     res.json(posts);
   }
   catch (error) {
