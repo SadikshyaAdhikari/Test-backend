@@ -4,6 +4,7 @@ import { upload } from "../middleware/multer.middleware.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { likePost, unlikePost } from "../controllers/likes.controller.js";
 import { addComment, deleteCommentController, getComments } from "../controllers/comments.controller.js";
+import { userOnly } from "../middleware/userOnly.js";
 
 const router = express.Router();
 
