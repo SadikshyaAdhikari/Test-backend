@@ -19,7 +19,7 @@ import { addRefreshTokenColumn } from "./src/models/user.model.js";
 import { seedSudoAdmin } from "./src/seeders/seed.js";
 import { createOtpTable } from './src/models/otp.model.js';
 import { generateRefreshToken, generateToken } from "./src/utils/token.js";
-import { createPostsTable } from './src/models/post.model.js';
+import { addLastEditedColumn, createPostsTable } from './src/models/post.model.js';
 import { addUniqueConstraint, createLikesTable } from './src/models/like.model.js';
 import { createCommentsTable } from './src/models/comment.model.js';
 
@@ -49,6 +49,7 @@ const PORT = process.env.PORT || 3000;
 // await createLikesTable();
 // await createCommentsTable();
 // await addUniqueConstraint();
+// await addLastEditedColumn();
 
 // app.use(
 //   session({
