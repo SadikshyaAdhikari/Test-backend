@@ -1,4 +1,5 @@
-import { createPost, deletePost, getAllPosts, getMyPosts, getPostsWithCounts } from "../models/post.model.js"
+import { createPost, deletePost, editPost, getAllPosts, getMyPosts, getPostsWithCounts } from "../models/post.model.js"
+import { db } from "../config/db.js";
 
 export const createPostController = async (req, res) => {
   try {
@@ -88,4 +89,55 @@ export const getUserPostsController = async (req, res) => {
     res.status(500).json({ message: "Server error" });
 
   }
+};
+
+//edit a post
+export const editPostController = async (req, res) => {
+  try {
+    const postId = req.params.postId;
+    const userId = req.user.id;
+    const { text } = req.body;
+
+    //Get post first
+    const post = await db.oneOrNone(
+      `SELECT * FROM posts WHERE id = $1 AND user_id = $2`,
+      [postId, userId]
+    );
+
+    if (!post) {
+      return res.status(403).json({ message: "Not allowed" });
+    }
+
+    const mediaUrl = req.file
+      ? `/uploads/${req.file.filename}`
+      : post.media_url;
+
+      const updatedText = text ? text : post.text;
+
+    // Check edit restriction
+    const lastEditTime = post.last_edited || post.created_at;
+    const diffHours =
+      (new Date() - new Date(lastEditTime)) / (1000 * 60 * 60);
+
+    if (diffHours < 24) {
+      return res.status(403).json({
+        message: "You can only edit once every 24 hours",
+      });
+    }
+
+    //Call model
+    const updatedPost = await editPost(
+      postId,
+      userId,
+      updatedText,
+      mediaUrl
+    );
+
+    res.json(updatedPost);
+
+  } catch (error) {
+    console.error("Error editing post:", error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
 };

@@ -20,6 +20,15 @@ export const createPostsTable = async () => {
     return db.none(query);
 }
 
+//add a new column for last edited timestamp
+export const addLastEditedColumn = async () => {
+  const query = `
+  ALTER TABLE posts
+  ADD COLUMN last_edited TIMESTAMP DEFAULT NULL;
+  `;
+  return db.none(query);
+}
+
 //insert a new post
 export const createPost = async (userId, text, mediaUrl) => {
     const query = `
@@ -100,4 +109,18 @@ export const getMyPosts = async (userId, limit, offset) => {
     LIMIT $2 OFFSET $3
   `;
   return db.any(query, [userId, limit, offset]);
-}st
+};
+
+//edit a post
+export const editPost = async (postId, userId, text, mediaUrl) => {
+  const query = `
+    UPDATE posts
+    SET text = $3,
+        media_url = $4,
+        updated_at = CURRENT_TIMESTAMP,
+        last_edited = CURRENT_TIMESTAMP
+    WHERE id = $1 AND user_id = $2
+    RETURNING *;
+  `;
+  return db.oneOrNone(query, [postId, userId, text, mediaUrl]);
+};
