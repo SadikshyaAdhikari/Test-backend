@@ -135,7 +135,8 @@ export const searchPosts = async (keyword) => {
       posts.like_count,
       posts.comment_count,
       posts.created_at,
-      users.id AS user_id
+      users.id AS user_id,
+      users.username
     FROM posts
     JOIN users ON posts.user_id = users.id
     WHERE posts.text ILIKE $1
