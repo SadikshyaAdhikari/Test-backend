@@ -53,6 +53,7 @@ export const getAllPosts = async () => {
     FROM posts
     JOIN users ON posts.user_id = users.id
     ORDER BY posts.created_at DESC
+   
   `;
 
     return db.any(query);
@@ -60,7 +61,7 @@ export const getAllPosts = async () => {
 
 
 //get posts with like and comment counts, and whether the current user liked each post
-export const getPostsWithCounts = async (userId) => {
+export const getPostsWithCounts = async (userId, limit, offset) => {
   const query = `
     SELECT 
       posts.*,
@@ -83,9 +84,10 @@ export const getPostsWithCounts = async (userId) => {
     -- Check if the current user liked the post
     LEFT JOIN likes AS user_like
       ON posts.id = user_like.post_id AND user_like.user_id = $1
-    ORDER BY posts.created_at DESC;
+    ORDER BY posts.created_at DESC
+    LIMIT $2 OFFSET $3
   `;
-  return db.any(query, [userId]);
+  return db.any(query, [userId, limit, offset]);
 };
 
 //delete a post
