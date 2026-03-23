@@ -1,4 +1,4 @@
-import { createPost, deletePost, editPost, getAllPosts, getMyPosts, getPostsWithCounts } from "../models/post.model.js"
+import { createPost, deletePost, editPost, getAllPosts, getMyPosts, getPostsWithCounts, searchPosts } from "../models/post.model.js"
 import { db } from "../config/db.js";
 
 export const createPostController = async (req, res) => {
@@ -141,3 +141,21 @@ export const editPostController = async (req, res) => {
   }
 };
 
+
+//search posts by keyword
+export const searchPostsController = async (req, res) => {
+  try {
+    const { keyword } = req.body;
+
+    if(!keyword) {
+      return res.status(400).json(
+        { message: "Keyword is required for searching posts!"}
+      );
+    }
+
+    const posts = await searchPosts(keyword);
+    res.json(posts);
+  } catch (error) {
+    console.error("Error seraching posts:", error);
+    res.status(500).json({ message: "Server error"});
+  }}

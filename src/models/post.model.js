@@ -1,7 +1,7 @@
 import { db } from "../config/db.js";
 
 export const createPostsTable = async () => {
-    const query = `
+  const query = `
     CREATE TABLE IF NOT EXISTS posts (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
@@ -17,7 +17,7 @@ export const createPostsTable = async () => {
             ON DELETE CASCADE
     );
   `;
-    return db.none(query);
+  return db.none(query);
 }
 
 //add a new column for last edited timestamp
@@ -31,17 +31,17 @@ export const addLastEditedColumn = async () => {
 
 //insert a new post
 export const createPost = async (userId, text, mediaUrl) => {
-    const query = `
+  const query = `
     INSERT INTO posts (user_id, text, media_url)
     VALUES ($1, $2, $3)
     RETURNING *;
     `;
-    return db.one(query, [userId, text, mediaUrl]);
+  return db.one(query, [userId, text, mediaUrl]);
 };
 
 //get all posts
 export const getAllPosts = async () => {
-    const query = `
+  const query = `
     SELECT 
       posts.id,
       posts.text,
@@ -56,7 +56,7 @@ export const getAllPosts = async () => {
    
   `;
 
-    return db.any(query);
+  return db.any(query);
 };
 
 
@@ -92,12 +92,12 @@ export const getPostsWithCounts = async (userId, limit, offset) => {
 
 //delete a post
 export const deletePost = async (postId) => {
-    const query = `
+  const query = `
     DELETE FROM posts
     WHERE id = $1
     RETURNING *;
     `;
-    return db.one(query, [postId]);
+  return db.one(query, [postId]);
 };
 
 //get posts for a specific user
@@ -124,3 +124,28 @@ export const editPost = async (postId, userId, text, mediaUrl) => {
   `;
   return db.oneOrNone(query, [postId, userId, text, mediaUrl]);
 };
+
+//search posts by keyword
+export const searchPosts = async (keyword) => {
+  const query = `
+    SELECT
+      posts.id,
+      posts.text,
+      posts.media_url,
+      posts.like_count,
+      posts.comment_count,
+      posts.created_at,
+      users.id AS user_id,
+      users.username
+    FROM posts
+    JOIN users ON posts.user_id = users.id
+    WHERE posts.text ILIKE $1
+    ORDER BY posts.created_at DESC
+  `;
+
+  const values = [`%${keyword}%`];
+
+  const result = await db.any(query, values);
+  return result;
+};
+
