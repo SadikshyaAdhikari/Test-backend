@@ -1,5 +1,5 @@
 import express from "express";
-import { createPostController, deletePostController, editPostController, fetchPosts, getAllPostsController, getUserPostsController, searchPostsController } from "../controllers/post.controller.js";
+import { createPostController, deletePostController, editPostController, fetchPosts, getAllPostsController, getPublicProfile, getUserPostsController, searchPostsController } from "../controllers/post.controller.js";
 import { upload } from "../middleware/multer.middleware.js";
 import { authMiddleware } from "../middleware/authMiddleware.js";
 import { likePost, unlikePost } from "../controllers/likes.controller.js";
@@ -25,6 +25,9 @@ router.post("/search", authMiddleware, searchPostsController);
 
 //delete post
 router.delete("/:postId", authMiddleware, deletePostController);    
+
+//public profile
+router.get("/users/:userId",authMiddleware, getPublicProfile);
 
 
 //LIKING

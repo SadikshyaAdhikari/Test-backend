@@ -1,5 +1,6 @@
-import { createPost, deletePost, editPost, getAllPosts, getMyPosts, getPostsWithCounts, searchPosts } from "../models/post.model.js"
+import { createPost, deletePost, editPost, getAllPosts, getMyPosts, getPostsByUserId, getPostsWithCounts, searchPosts } from "../models/post.model.js"
 import { db } from "../config/db.js";
+import { getPublicUserById } from "../models/user.model.js";
 
 export const createPostController = async (req, res) => {
   try {
@@ -28,7 +29,7 @@ export const createPostController = async (req, res) => {
 //get all posts 
 export const getAllPostsController = async (req, res) => {
   try {
-    
+
     const posts = await getAllPosts();
 
     res.status(200).json({
@@ -49,7 +50,7 @@ export const fetchPosts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
-    const offset = (page -1) * limit;
+    const offset = (page - 1) * limit;
 
     const userId = req.user.id; // get logged-in user ID from auth
     const posts = await getPostsWithCounts(userId, limit, offset);
@@ -79,7 +80,7 @@ export const getUserPostsController = async (req, res) => {
 
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
-    const offset = (page -1) * limit;
+    const offset = (page - 1) * limit;
 
     const posts = await getMyPosts(userId, limit, offset);
     res.json(posts);
@@ -112,7 +113,7 @@ export const editPostController = async (req, res) => {
       ? `/uploads/${req.file.filename}`
       : post.media_url;
 
-      const updatedText = text ? text : post.text;
+    const updatedText = text ? text : post.text;
 
     // Check edit restriction
     const lastEditTime = post.last_edited || post.created_at;
@@ -147,9 +148,9 @@ export const searchPostsController = async (req, res) => {
   try {
     const { keyword } = req.body;
 
-    if(!keyword) {
+    if (!keyword) {
       return res.status(400).json(
-        { message: "Keyword is required for searching posts!"}
+        { message: "Keyword is required for searching posts!" }
       );
     }
 
@@ -157,5 +158,33 @@ export const searchPostsController = async (req, res) => {
     res.json(posts);
   } catch (error) {
     console.error("Error seraching posts:", error);
-    res.status(500).json({ message: "Server error"});
-  }}
+    res.status(500).json({ message: "Server error" });
+  }
+}
+
+
+export const getPublicProfile = async (req, res) => {
+  const userId = req.params.userId;
+
+
+  try {
+    const user = await getPublicUserById(userId);
+    console.log("Pram Id:", user);
+
+    console.log("user:", user);
+
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    const posts = await getPostsByUserId(userId);
+
+    res.json({
+      user,
+      posts,
+    });
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ message: "Server error" });
+  }
+};
