@@ -149,3 +149,19 @@ export const searchPosts = async (keyword) => {
   return result;
 };
 
+export const getPostsByUserId = async (userId) => {
+  const query = `
+    SELECT 
+      posts.id,
+      posts.text,
+      posts.media_url,
+      posts.like_count,
+      posts.comment_count,
+      posts.created_at,
+      posts.user_id
+    FROM posts
+    WHERE posts.user_id = $1
+    ORDER BY posts.created_at DESC
+  `;
+  return db.any(query, [userId]);
+};
