@@ -1,7 +1,8 @@
 import { db } from "../config/db.js";
+import { createNotification } from "./notification.model.js";
 
 export const createLikesTable = async () => {
-    const query = `
+  const query = `
     CREATE TABLE IF NOT EXISTS likes (
         id SERIAL PRIMARY KEY,
         user_id INTEGER NOT NULL,
@@ -18,16 +19,16 @@ export const createLikesTable = async () => {
         UNIQUE (user_id, post_id)
     );
  `;
-    return db.none(query);
+  return db.none(query);
 }
 
 //Add a named unique constraint to prevent duplicate likes
 export const addUniqueConstraint = async () => {
-    const query = `
+  const query = `
     ALTER TABLE likes
      ADD CONSTRAINT unique_user_post UNIQUE (user_id, post_id);
     `;
-    return db.none(query);
+  return db.none(query);
 };
 
 export const createLike = async (userId, postId) => {
@@ -46,7 +47,24 @@ export const createLike = async (userId, postId) => {
         `UPDATE posts SET like_count = like_count + 1 WHERE id = $1`,
         [postId]
       );
+
+      // get post owner
+      const post = await db.one(
+        `SELECT user_id FROM posts WHERE id = $1`,
+        [postId]
+      );
+
+      if (post.user_id !== userId) {
+        await createNotification(
+          post.user_id,   // receiver
+          userId,         // sender
+          postId,
+          "like",
+          "liked your post"
+        );
+      }
     }
+
   } catch (err) {
     console.error("Error creating like:", err);
     throw err;

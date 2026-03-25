@@ -1,4 +1,5 @@
 import { db } from "../config/db.js";
+import { createNotification } from "./notification.model.js";
 
 export const createCommentsTable = async () => {
     const query = `
@@ -23,7 +24,6 @@ export const createCommentsTable = async () => {
 }
 
 export const createComment = async (postId, userId, text) => {
-    // Insert the comment
     const queryInsert = `
         INSERT INTO comments (post_id, user_id, text)
         VALUES ($1, $2, $3)
@@ -31,7 +31,6 @@ export const createComment = async (postId, userId, text) => {
     `;
     const newComment = await db.one(queryInsert, [postId, userId, text]);
 
-    // Increment comment_count in posts table
     const queryUpdateCount = `
         UPDATE posts
         SET comment_count = comment_count + 1
@@ -39,10 +38,24 @@ export const createComment = async (postId, userId, text) => {
     `;
     await db.none(queryUpdateCount, [postId]);
 
+    const post = await db.one(
+        `SELECT user_id FROM posts WHERE id = $1`,
+        [postId]
+    );
+
+    if (post.user_id !== userId) {
+        await createNotification(
+            post.user_id,   
+            userId,         
+            postId,
+            "comment",
+            "commented on your post"
+        );
+    }
+
     return newComment;
 }
 
-//get comments by post id
 export const getCommentsByPostId = async (postId) => {
     const query = `
     SELECT 
@@ -59,21 +72,17 @@ export const getCommentsByPostId = async (postId) => {
     
 }
 
-//delete a comment
 export const deleteComment = async (commentId) => {
-    //get post_id before deleting
     const queryGetPostId = `
     SELECT post_id FROM comments WHERE id = $1;
     `;
     const { post_id } = await db.one(queryGetPostId, [commentId]);
-     //delete
      const queryDelete = `
      DELETE FROM comments WHERE id = $1 
         RETURNING *;
         `;
     const deletedComment = await db.one(queryDelete, [commentId]);
 
-    //decrement comment_count in posts table
     const queryUpdateCount = `
         UPDATE posts
         SET comment_count = comment_count - 1
