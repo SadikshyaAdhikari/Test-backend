@@ -6,6 +6,8 @@ import { likePost, unlikePost } from "../controllers/likes.controller.js";
 import { addComment, deleteCommentController, getComments } from "../controllers/comments.controller.js";
 import { userOnly } from "../middleware/userOnly.js";
 import { getNotifications, markAsRead } from "../controllers/notification.controller.js";
+import { updateAvatar } from "../controllers/avatar.controllers.js";
+import { avatarUpload } from "../middleware/avatarUploads.js";
 
 const router = express.Router();
 
@@ -33,6 +35,10 @@ router.delete("/comments/:commentId", authMiddleware, deleteCommentController);
 //NOTIFICATION
 router.get("/notifications", authMiddleware, getNotifications);
 router.put("/notifications/:id/read", authMiddleware, markAsRead);
+
+//AVATAR
+router.post("/avatar",authMiddleware, avatarUpload.single("avatar"), updateAvatar);
+
 
 
 export default router;

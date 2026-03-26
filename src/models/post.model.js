@@ -165,3 +165,15 @@ export const getPostsByUserId = async (userId) => {
   `;
   return db.any(query, [userId]);
 };
+
+export const addAvatarCloumn = async() => {
+  const query = `
+    ALTER TABLE posts
+    ADD COLUMN avatar_url TEXT DEFAULT NULL;
+  `;
+   try{
+  return db.none(query);
+  } catch (error) {
+    console.error("Error adding avatar_url column:", error.message);
+  }
+};
