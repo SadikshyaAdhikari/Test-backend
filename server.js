@@ -22,6 +22,7 @@ import { generateRefreshToken, generateToken } from "./src/utils/token.js";
 import { addLastEditedColumn, createPostsTable } from './src/models/post.model.js';
 import { addUniqueConstraint, createLikesTable } from './src/models/like.model.js';
 import { createCommentsTable } from './src/models/comment.model.js';
+import { createNotificationTable } from "./src/models/notification.model.js";
 
 
 //const PORT = 3000; //dont use this port here use it fronm env file
@@ -50,6 +51,7 @@ const PORT = process.env.PORT || 3000;
 // await createCommentsTable();
 // await addUniqueConstraint();
 // await addLastEditedColumn();
+await createNotificationTable();
 
 // app.use(
 //   session({

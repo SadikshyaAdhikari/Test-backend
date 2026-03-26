@@ -4,7 +4,7 @@ import { getPublicUserById } from "../models/user.model.js";
 
 export const createPostController = async (req, res) => {
   try {
-    const userId = req.user.id;   // from auth middleware
+    const userId = req.user.id;  
     const { text = '' } = req.body;
     let mediaUrl = null;
 
@@ -25,8 +25,6 @@ export const createPostController = async (req, res) => {
   }
 };
 
-
-//get all posts 
 export const getAllPostsController = async (req, res) => {
   try {
 
@@ -45,14 +43,13 @@ export const getAllPostsController = async (req, res) => {
   }
 };
 
-//get posts with like and comment counts, and whether the current user liked each post
 export const fetchPosts = async (req, res) => {
   try {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 5;
     const offset = (page - 1) * limit;
 
-    const userId = req.user.id; // get logged-in user ID from auth
+    const userId = req.user.id; 
     const posts = await getPostsWithCounts(userId, limit, offset);
     res.json(posts);
   } catch (error) {
@@ -61,7 +58,6 @@ export const fetchPosts = async (req, res) => {
   }
 };
 
-//delete a post
 export const deletePostController = async (req, res) => {
   try {
     const postId = req.params.postId;
@@ -73,7 +69,6 @@ export const deletePostController = async (req, res) => {
   }
 };
 
-//get posts of a specific user
 export const getUserPostsController = async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -92,14 +87,12 @@ export const getUserPostsController = async (req, res) => {
   }
 };
 
-//edit a post
 export const editPostController = async (req, res) => {
   try {
     const postId = req.params.postId;
     const userId = req.user.id;
     const { text } = req.body;
 
-    //Get post first
     const post = await db.oneOrNone(
       `SELECT * FROM posts WHERE id = $1 AND user_id = $2`,
       [postId, userId]
@@ -115,7 +108,6 @@ export const editPostController = async (req, res) => {
 
     const updatedText = text ? text : post.text;
 
-    // Check edit restriction
     const lastEditTime = post.last_edited || post.created_at;
     const diffHours =
       (new Date() - new Date(lastEditTime)) / (1000 * 60 * 60);
@@ -126,7 +118,6 @@ export const editPostController = async (req, res) => {
       });
     }
 
-    //Call model
     const updatedPost = await editPost(
       postId,
       userId,
@@ -143,7 +134,6 @@ export const editPostController = async (req, res) => {
 };
 
 
-//search posts by keyword
 export const searchPostsController = async (req, res) => {
   try {
     const { keyword } = req.body;
@@ -169,9 +159,6 @@ export const getPublicProfile = async (req, res) => {
 
   try {
     const user = await getPublicUserById(userId);
-    // console.log("Pram Id:", user);
-
-    // console.log("user:", user);
 
     if (!user) {
       return res.status(404).json({ message: "User not found" });
