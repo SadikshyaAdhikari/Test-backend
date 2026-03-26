@@ -15,7 +15,6 @@ export const createUserTable = async () => {
   return db.none(query);
 };
 
-// Insert a new user
 export const insertUser = async (username, email, hashedPassword, role, token, refresh_token) => {
   const query = `
     INSERT INTO users (username, email, password, role, token,refresh_token)
@@ -36,23 +35,19 @@ export const insertToken = async (token, userId ) => {
 }
 
 
-// Find user by email
 export const findUserByEmail = async (email) => {
   return db.oneOrNone('SELECT * FROM users WHERE email = $1', [email]);
 };
 
-// Delete user by id
 export const deleteUserById = async (id) => {
   return db.none('DELETE FROM users WHERE id = $1', [id]);
 };
 
 
-// Find user by id
 export const findUserById = async (id) => {
   return db.oneOrNone('SELECT * FROM users WHERE id = $1', [id]);
 };
 
-// view my details
 // export const getUserDetails = async (id) => {
 //   return db.oneOrNone('SELECT id, username, email, role, created_at FROM users WHERE id = $1', [id]);
 // };
@@ -66,7 +61,6 @@ export const getUserDetails = async (id) => {
   );
 };
 
-//add refresh token column to users table
 export const addRefreshTokenColumn = async () => {
   const query = `
     ALTER TABLE users
@@ -79,7 +73,6 @@ export const addRefreshTokenColumn = async () => {
   }
 } ;
 
-// Update refresh token for a user
 export const insertRefreshToken = async (refreshToken, userId) => {
   const query = `
     UPDATE users  
@@ -91,12 +84,10 @@ export const insertRefreshToken = async (refreshToken, userId) => {
 };
 
 
-// Find user by refresh token
 export const findUserByRefreshToken = async (refreshToken) => {
   return db.oneOrNone('SELECT * FROM users WHERE refresh_token = $1', [refreshToken]);
 };
 
-// Clear all tokens for a user (logout from all devices)
 export const clearAllTokens = async (userId) => {
   const query = `
     UPDATE users  
@@ -108,7 +99,6 @@ export const clearAllTokens = async (userId) => {
 };
 
 
-//add is_deleted and deleted_at columns to user table
 export const addDeletedColumns = async () => {
   const query = `
     ALTER TABLE users
@@ -129,7 +119,6 @@ export const addDeletedColumns = async () => {
 };
 
 
-//inserting values into is_deleted and deleted_at columns
 export const softDeleteUserById = async (userId) => {
   const query = `
     UPDATE users
@@ -144,7 +133,6 @@ export const softDeleteUserById = async (userId) => {
 };
 
 
-//reactivate deactivated user
 export const reactivateUser = async (userId, hashedPassword, username) => {
   const query = `
     UPDATE users
@@ -160,7 +148,6 @@ export const reactivateUser = async (userId, hashedPassword, username) => {
 };
 
 
-//add reset-token column
 export const addResetTokenColumn = async () => {
   const query = `
     ALTER TABLE users
@@ -176,7 +163,6 @@ export const addResetTokenColumn = async () => {
 
 
 
-//columns for oAuth users
 export const addOAuthColumns = async () => {
   const query = `
     ALTER TABLE users 
@@ -187,7 +173,6 @@ export const addOAuthColumns = async () => {
 };
 
 
-//remove not null constraint from password column to allow oAuth users without password
 export const removeNotNullConstraintFromPassword = async () => {
   const query = `
     ALTER TABLE users

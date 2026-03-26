@@ -32,7 +32,7 @@ router.delete("/comments/:commentId", authMiddleware, deleteCommentController);
 
 //NOTIFICATION
 router.get("/notifications", authMiddleware, getNotifications);
-router.put("/:id/read", authMiddleware, markAsRead);
+router.put("/notifications/:id/read", authMiddleware, markAsRead);
 
 
 export default router;

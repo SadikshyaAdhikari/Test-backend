@@ -33,7 +33,6 @@ export const addUniqueConstraint = async () => {
 
 export const createLike = async (userId, postId) => {
   try {
-    // Attempt to insert a like; check if it actually happened
     const result = await db.result(
       `INSERT INTO likes (user_id, post_id)
        VALUES ($1, $2)
@@ -41,14 +40,12 @@ export const createLike = async (userId, postId) => {
       [userId, postId]
     );
 
-    // Only increment like_count if a new like was inserted
     if (result.rowCount > 0) {
       await db.none(
         `UPDATE posts SET like_count = like_count + 1 WHERE id = $1`,
         [postId]
       );
 
-      // get post owner
       const post = await db.one(
         `SELECT user_id FROM posts WHERE id = $1`,
         [postId]
@@ -56,8 +53,8 @@ export const createLike = async (userId, postId) => {
 
       if (post.user_id !== userId) {
         await createNotification(
-          post.user_id,   // receiver
-          userId,         // sender
+          post.user_id,   
+          userId,         
           postId,
           "like",
           "liked your post"
@@ -71,7 +68,6 @@ export const createLike = async (userId, postId) => {
   }
 };
 
-//delete a like
 export const deleteLike = async (userId, postId) => {
   const result = await db.result(
     `DELETE FROM likes
