@@ -6,7 +6,7 @@ export const updateAvatar = async (req, res) => {
   const avatarUrl = `/uploads/avatars/${req.file.filename}`;
 
   try {
-    await db.none("UPDATE posts SET avatar_url=$1 WHERE id=$2", [avatarUrl, req.user.id]);
+    await db.none("UPDATE users SET avatar_url=$1 WHERE id=$2", [avatarUrl, req.user.id]);
     res.json({ avatarUrl });
   } catch (err) {
     console.error(err);
