@@ -10,7 +10,7 @@ dotenv.config();
 import app from "./src/app.js";
 
 import { addColumnToUserTable, createDatabase, updatePhoneNumber } from "./src/services/database.service.js";
-import { addDeletedColumns, addOAuthColumns, addResetTokenColumn, createUserTable, insertRefreshToken, insertToken, removeNotNullConstraintFromPassword } from "./src/models/user.model.js";
+import { addAvatarColumn, addDeletedColumns, addOAuthColumns, addResetTokenColumn, createUserTable, insertRefreshToken, insertToken, removeNotNullConstraintFromPassword } from "./src/models/user.model.js";
 import { insertUser } from "./src/services/database.service.js";
 import { fetchUsers } from "./src/services/database.service.js";
 import { updateUserEmail } from "./src/services/database.service.js";
@@ -19,7 +19,7 @@ import { addRefreshTokenColumn } from "./src/models/user.model.js";
 import { seedSudoAdmin } from "./src/seeders/seed.js";
 import { createOtpTable } from './src/models/otp.model.js';
 import { generateRefreshToken, generateToken } from "./src/utils/token.js";
-import { addAvatarCloumn, addLastEditedColumn, createPostsTable } from './src/models/post.model.js';
+import { addLastEditedColumn, createPostsTable } from './src/models/post.model.js';
 import { addUniqueConstraint, createLikesTable } from './src/models/like.model.js';
 import { createCommentsTable } from './src/models/comment.model.js';
 import { createNotificationTable } from "./src/models/notification.model.js";
@@ -52,7 +52,8 @@ const PORT = process.env.PORT || 3000;
 // await addUniqueConstraint();
 // await addLastEditedColumn();
 // await createNotificationTable();
-// await addAvatarCloumn();
+// await addAvatarColumn();
+
 
 // app.use(
 //   session({
