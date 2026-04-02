@@ -3,7 +3,7 @@ import path from "path";
 
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
-    cb(null, "uploads/");   // folder where files are stored
+    cb(null, "uploads/");   
   },
   filename: (req, file, cb) => {
     const uniqueName = Date.now() + path.extname(file.originalname);
@@ -12,7 +12,7 @@ const storage = multer.diskStorage({
   },
 });
 
-//file type validation
+
 const fileFilter = (req, file, cb) => {
   const allowedTypes = ["image/jpeg", "image/png", "video/mp4"];
 
@@ -27,7 +27,7 @@ export const upload = multer({
   storage,
   fileFilter,
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB 
+    fileSize: 5 * 1024 * 1024, 
   },
 });
 

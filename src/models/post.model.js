@@ -165,3 +165,4 @@ export const getPostsByUserId = async (userId) => {
   `;
   return db.any(query, [userId]);
 };
+

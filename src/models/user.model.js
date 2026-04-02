@@ -54,7 +54,7 @@ export const findUserById = async (id) => {
 
 export const getUserDetails = async (id) => {
   return db.oneOrNone(
-    `SELECT id, username, email, role, google_id, auth_provider, created_at 
+    `SELECT id, username, email, role, google_id, auth_provider, created_at, avatar_url
      FROM users 
      WHERE id = $1`,
     [id]
@@ -188,4 +188,17 @@ export const getPublicUserById = async (userId) => {
     WHERE id = $1 
   `;
   return db.oneOrNone(query, [userId]);
+};
+
+
+export const addAvatarColumn = async() => {
+  const query = `
+    ALTER TABLE users
+    ADD COLUMN avatar_url TEXT DEFAULT NULL;
+  `;
+   try{
+  return db.none(query);
+  } catch (error) {
+    console.error("Error adding avatar_url column:", error.message);
+  }
 };

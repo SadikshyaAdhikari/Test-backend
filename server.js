@@ -10,7 +10,7 @@ dotenv.config();
 import app from "./src/app.js";
 
 import { addColumnToUserTable, createDatabase, updatePhoneNumber } from "./src/services/database.service.js";
-import { addDeletedColumns, addOAuthColumns, addResetTokenColumn, createUserTable, insertRefreshToken, insertToken, removeNotNullConstraintFromPassword } from "./src/models/user.model.js";
+import { addAvatarColumn, addDeletedColumns, addOAuthColumns, addResetTokenColumn, createUserTable, insertRefreshToken, insertToken, removeNotNullConstraintFromPassword } from "./src/models/user.model.js";
 import { insertUser } from "./src/services/database.service.js";
 import { fetchUsers } from "./src/services/database.service.js";
 import { updateUserEmail } from "./src/services/database.service.js";
@@ -51,7 +51,9 @@ const PORT = process.env.PORT || 3000;
 // await createCommentsTable();
 // await addUniqueConstraint();
 // await addLastEditedColumn();
-await createNotificationTable();
+// await createNotificationTable();
+// await addAvatarColumn();
+
 
 // app.use(
 //   session({
