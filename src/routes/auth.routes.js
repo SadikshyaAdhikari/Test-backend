@@ -9,6 +9,7 @@ import { userOnly } from '../middleware/userOnly.js';
 import { verifyRefreshTokenMiddleware } from '../middleware/verifyTokenMiddleware.js';
 import { authMiddleware } from '../middleware/authMiddleware.js';
 import { forgotPassword, resendOtp, resetPassword, verifyOtp } from '../controllers/forgetPassword.controller.js';
+import { changePassword } from '../controllers/updatePassword.controller.js';
 
 
 const router = express.Router();
@@ -19,43 +20,34 @@ router.post('/register', registerUser);
 //Login route
 router.post('/login', loginUser);
 
-//Delete user route - Users can soft delete themselves, admins/sudo can delete any user
 router.delete('/delete/:id', authMiddleware, deleteUser);
 
 
-//view my details
 // router.post('/me', viewMyDetails);
 // router.get('/me/:id',authMiddleware, userOnly, viewMyDetails);
 
-//refresh token route
 router.post('/refresh-token', verifyRefreshTokenMiddleware ,refreshToken);
 
-//logout route
 router.post('/logout', logoutUser);
 
-//logout from all devices route
 router.post('/logout-all-devices', authMiddleware, logoutFromAllDevices);
 
-//forgot password
 router.post('/forgot-password', forgotPassword);
 
-//Verify Otp
 router.post('/forgot-password/verify-otp' ,verifyOtp)
 
-//reset password
 router.post('/reset-password/:reset_token', resetPassword)
 
-//resend-otp
+router.post('/change-password', authMiddleware, changePassword)
+
 router.post('/resend-otp', resendOtp)
 
-//current-user route
 router.get('/current-user', authMiddleware, currentUser);
 
-//user from id route
+
 router.get('/user/:id', authMiddleware, findUserByIdController);
 
                                                     
-// module.exports = router;
 export default router;
 
 // router.get('/me', (req, res) => {

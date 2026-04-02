@@ -109,14 +109,14 @@ export const authMiddleware = async (req, res, next) => {
       httpOnly: true,
       secure: false,
       sameSite: "Lax",
-      maxAge: 15 * 60 * 1000,
+      maxAge:Number(process.env.ACCESS_TOKEN_EXPIRY)
     });
 
     res.cookie("refreshToken", refreshToken, {
       httpOnly: true,
       secure: false,
       sameSite: "Lax",
-      maxAge: 24 * 60 * 60 * 1000,
+      maxAge:Number(process.env.REFRESH_COOKIE_MAX_AGE)
     });
 
     req.user = user;

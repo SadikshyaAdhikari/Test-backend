@@ -7,6 +7,7 @@ export const updateAvatar = async (req, res) => {
 
   try {
     await db.none("UPDATE users SET avatar_url=$1 WHERE id=$2", [avatarUrl, req.user.id]);
+    console.log(req.user.id);
     res.json({ avatarUrl });
   } catch (err) {
     console.error(err);
